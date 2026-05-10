@@ -164,7 +164,7 @@
       align-items:center;
       justify-content:center;
       flex-direction:column;
-      z-index:2;
+      z-index:999;
     }
 
     .lightbox img{
@@ -176,15 +176,33 @@
 
     .close,.prev,.next{
       position:absolute;
-      font-size:32px;
+      font-size:40px;
       cursor:pointer;
       color:#fff;
       user-select:none;
+      transition:0.3s;
     }
 
-    .close{top:20px; right:30px;}
-    .prev{left:20px;}
-    .next{right:20px;}
+    .close{
+      top:20px; 
+      right:30px;
+    }
+
+    .prev{
+      left:20px;
+      top:50%;
+      transform:translateY(-50%);
+    }
+
+    .next{
+      right:20px;
+      top:50%;
+      transform:translateY(-50%);
+    }
+
+    .prev:hover,.next:hover,.close:hover{
+  color:#ff8fab;
+}
   </style>
 </head>
 <body>
@@ -216,6 +234,16 @@
   <div class="item nature"><img src="https://images.unsplash.com/photo-1511497584788-876760111969?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZvcmVzdHxlbnwwfHwwfHx8MA%3D%3D"></div>
   <div class="item city"><img src="https://media.istockphoto.com/id/2225405260/photo/london-cityscape-with-the-gherkin-building.webp?a=1&b=1&s=612x612&w=0&k=20&c=9ZzyyfUiXJHBG0wTkA2AePTcBuDpYvf8vJuDgpcymPc="></div>
   <div class="item tech"><img src="https://images.unsplash.com/photo-1568952433726-3896e3881c65?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dGVjaG5vbG9neXxlbnwwfHwwfHx8MA%3D%3D"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="close">&times;</span>
+
+  <span class="prev">&#10094;</span>
+  <span class="next">&#10095;</span>
+
+  <img src="" class="lightbox-img" alt="">
 </div>
 
 <script>
@@ -277,6 +305,56 @@ function filterImages(category, event){
 
   event.target.classList.add('active');
 }
+
+const items = document.querySelectorAll('.item img');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.querySelector('.lightbox-img');
+const closeBtn = document.querySelector('.close');
+const prevBtn = document.querySelector('.prev');
+const nextBtn = document.querySelector('.next');
+
+let currentIndex = 0;
+
+// open lightbox
+items.forEach((img, index) => {
+  img.addEventListener('click', () => {
+    currentIndex = index;
+    openLightbox();
+  });
+});
+
+function openLightbox(){
+  lightbox.style.display = 'flex';
+  showImage();
+}
+
+function showImage(){
+  lightboxImg.src = items[currentIndex].src;
+}
+
+// next
+nextBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % items.length;
+  showImage();
+});
+
+// prev
+prevBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + items.length) % items.length;
+  showImage();
+});
+
+// close
+closeBtn.addEventListener('click', () => {
+  lightbox.style.display = 'none';
+});
+
+// click outside image
+lightbox.addEventListener('click', (e) => {
+  if(e.target === lightbox){
+    lightbox.style.display = 'none';
+  }
+});
 </script>
 
 </body>
